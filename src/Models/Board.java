@@ -1,17 +1,19 @@
-package Models;
-import java.util.*;
+package models;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Board {
     private int size;
-    private List<List<Cell>> grid;
+    List<List<Cell>> grid;
 
-    public Board(int dim) {
-        this.size = dim;
+    public Board(int dimension){
+        this.size=dimension;
         grid = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
+        for (int i=0;i<size;i++){
             grid.add(new ArrayList<>());
-            for (int j = 0; j < size; j++) {
-                grid.get(i).add(new Cell(i, j));
+            for(int j = 0; j < size; j++) {
+                grid.get(i).add(new Cell(i,j));
             }
         }
     }
@@ -32,12 +34,13 @@ public class Board {
         this.grid = grid;
     }
 
-    public void printBoard() {
-        for(List<Cell> rows: grid) {
-            for (Cell c: rows) {
+    public void printBoard(){
+        for (List<Cell> rows: grid) {
+            for(Cell c:rows){
                 c.display();
             }
-            System.out.println("-----------------------");
+            System.out.println();
+
         }
     }
 }

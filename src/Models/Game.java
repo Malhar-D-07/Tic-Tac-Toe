@@ -1,25 +1,42 @@
-package Models;
-import Exceptions.InvalidBotCountException;
+package models;
 
-import java.util.*;
+import  Exceptions.InvalidBotCountException;
+import  Exceptions.PlayerSizeInvalid;
+import  stratergy.winning.WinningStrategy;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Game {
+
     private Board board;
-    private List<Player> players;
+    List<Player> players;
     private List<Cell> moves;
-    private GameStatus gameStatus;
+
     private int nextPlayerTurn;
+
     private Player winner;
+    private GameStatus gameStatus;
+
     List<WinningStrategy> winningStrategies;
 
-    private Game(int dimension, List<Player> players, List<WinningStrategy> strategies) {
+    private Game(int dimension, List<Player> players, List<WinningStrategy> ws){
         this.board = new Board(dimension);
         this.players = players;
-        this.winningStrategies = strategies;
+        this.winningStrategies = ws;
         this.moves = new ArrayList<>();
         this.gameStatus = GameStatus.IN_PROGRESS;
         this.nextPlayerTurn = 0;
         this.winner = null;
+
+    }
+
+    public List<WinningStrategy> getWinningStrategies() {
+        return winningStrategies;
+    }
+
+    public void setWinningStrategies(List<WinningStrategy> winningStrategies) {
+        this.winningStrategies = winningStrategies;
     }
 
     public Board getBoard() {
@@ -70,21 +87,21 @@ public class Game {
         this.winner = winner;
     }
 
-    public static GameBuilder getBuilderInstance() {
-        return new GameBuilder();
+    public static Builder getBuilder(){
+        return new Builder();
     }
 
-    public static class GameBuilder {
-        int dim;
-        private List<Player> players;
-        List<WinningStrategy> winningStrategies;
+    public static class Builder{
+        int dimension;
+        List<Player> players;
+        List<WinningStrategy> ws;
 
-        public int getDim() {
-            return dim;
+        public int getDimension() {
+            return dimension;
         }
 
-        public GameBuilder setDim(int dim) {
-            this.dim = dim;
+        public Builder setDimension(int dimension) {
+            this.dimension = dimension;
             return this;
         }
 
@@ -92,43 +109,96 @@ public class Game {
             return players;
         }
 
-        public GameBuilder setPlayers(List<Player> players) {
+        public Builder setPlayers(List<Player> players) {
             this.players = players;
             return this;
         }
 
-        public List<WinningStrategy> getWinningStrategies() {
-            return winningStrategies;
+        public List<WinningStrategy> getWs() {
+            return ws;
         }
 
-        public GameBuilder setWinningStrategies(List<WinningStrategy> winningStrategies) {
-            this.winningStrategies = winningStrategies;
+        public Builder setWs(List<WinningStrategy> ws) {
+            this.ws = ws;
             return this;
         }
 
-        public void validate() throws InvalidBotCountException {
-            int botCount = 0;
-            for (Player p: players) {
-                if(p.getType().equals(PlayerType.BOT)) {
-                    botCount += 1;
+        public void validate() throws InvalidBotCountException, PlayerSizeInvalid {
+            int botCount=0;
+            for (Player p : players){
+                if(p.getPlayerType().equals(playerType.BOT)){
+                    botCount+=1;
                 }
             }
-            if(botCount > 1) {
+            if(botCount>1){
                 throw new InvalidBotCountException();
             }
-
-            if(players.size() > dim - 1) {
-                throw new RuntimeException();
+            if (players.size() > dimension-1){
+                throw new PlayerSizeInvalid();
             }
         }
-
-        public Game build() throws InvalidBotCountException {
+        public Game build() throws InvalidBotCountException, PlayerSizeInvalid {
             validate();
-            return new Game(this.dim, this.players, this.winningStrategies);
+            return new Game(this.dimension, this.players,
+                    this.ws);
         }
     }
 
-    public void makeMove() {
+    public void MakeMove(){
         Player currentPlayer = players.get(nextPlayerTurn);
+
+        Cell c = currentPlayer.decideCell(board);
+
+        if(c == null){
+            System.out.println("Invalid input");
+            return;
+        }
+
+        c.setPlayer(currentPlayer);
+        c.setCellStatus(CellStatus.FILLED);
+        moves.add(c);
+
+        if(checkWinner(board, c)){
+            gameStatus = GameStatus.SUCCESS;
+            winner = currentPlayer;
+        } else if (moves.size() == board.getSize()* board.getSize()) {
+            gameStatus = GameStatus.DRAW;
+        }
+        this.nextPlayerTurn +=1;
+        this.nextPlayerTurn = (players.size()+nextPlayerTurn)%players.size();
+
     }
+
+
+    public boolean checkWinner(Board b, Cell c){
+        for (WinningStrategy winStr: winningStrategies){
+            if(winStr.checkWinner(c,b)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void undo(){
+        if(moves.isEmpty()){
+            System.out.println("Nothing to undo..");
+            return;
+        }
+
+        Cell c = moves.get(moves.size() - 1);
+        moves.remove(moves.size() - 1);
+
+        for(WinningStrategy ws: winningStrategies){
+            ws.handleUndo(c, board);
+        }
+
+        c.setCellStatus(CellStatus.EMPTY);
+        c.setPlayer(null);
+        nextPlayerTurn -=1;
+        nextPlayerTurn = (players.size()+nextPlayerTurn)%players.size();
+
+    }
+
+
+
 }

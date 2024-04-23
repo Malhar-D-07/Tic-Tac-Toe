@@ -1,25 +1,31 @@
-package Models;
+package models;
 
-public class Bot extends Player {
+import  stratergy.botStrategy.BotPlayingFactory;
+import  stratergy.botStrategy.BotStrategy;
 
-    private BotDifficulty difficulty;
+public class Bot extends Player{
 
-    public Bot(String n, int id, PlayerType type, Symbol s, BotDifficulty d) {
-        super(n, id, type, s);
-        this.difficulty = d;
+    private BotDificulty botDificulty;
+
+    private BotStrategy bs;
+    public BotDificulty getBotDificulty() {
+        return botDificulty;
     }
 
-    public BotDifficulty getDifficulty() {
-        return difficulty;
+    public void setBotDificulty(BotDificulty botDificulty) {
+        this.botDificulty = botDificulty;
+
     }
 
-    public void setDifficulty(BotDifficulty difficulty) {
-        this.difficulty = difficulty;
+    public Bot(int id, String name, Symbol s, BotDificulty d){
+        super(name, id, playerType.BOT, s);
+        this.botDificulty=d;
+        this.bs = BotPlayingFactory.getStartegyForBot(d);
     }
 
-//    @Override
-//    public Cell decideCell(Board b) {
-//
-//    }
+    public Cell decideCell(Board b){
+        System.out.println("Bot is playing..");
+        return bs.decideMove(b);
+    }
+
 }
-

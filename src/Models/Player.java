@@ -1,20 +1,18 @@
-package Models;
-import java.lang.*;
-import java.util.*;
+package models;
+
+import java.util.Scanner;
+
 public class Player {
+
     private int id;
     private String name;
-    private PlayerType type;
+
+    private playerType playerType;
+
     private Symbol symbol;
 
-    Scanner sc;
-    public Player(String n, int id, PlayerType type, Symbol s) {
-        this.name = n;
-        this.id = id;
-        this.type = type;
-        this.symbol = s;
-        sc = new Scanner(System.in);
-    }
+    Scanner scanner;
+
     public int getId() {
         return id;
     }
@@ -31,12 +29,12 @@ public class Player {
         this.name = name;
     }
 
-    public PlayerType getType() {
-        return type;
+    public playerType getPlayerType() {
+        return playerType;
     }
 
-    public void setType(PlayerType type) {
-        this.type = type;
+    public void setPlayerType(playerType playerType) {
+        this.playerType = playerType;
     }
 
     public Symbol getSymbol() {
@@ -47,30 +45,29 @@ public class Player {
         this.symbol = symbol;
     }
 
-    public boolean validateInput(int entry, Board b) {
-        if(entry > b.getSize()) {
-            return false;
-        }
-        return true;
+    public Player(String name, int id, playerType type, Symbol s){
+        this.name=name;
+        this.id=id;
+        this.playerType=type;
+        this.symbol=s;
+        scanner = new Scanner(System.in);
     }
 
-    public Cell decideCell(Board b) {
-        System.out.println("Please mention the row number");
-        int row = sc.nextInt();
+    public boolean validateInput(int row, int col){
+        return true;
+    }
+    public Cell decideCell(Board b){
+        System.out.println("Please mention a row..");
+        int row = scanner.nextInt();
+        System.out.println("Please mention a col..");
+        int col = scanner.nextInt();
 
-        while(!validateInput(row, b)) {
-            System.out.println("Row number is greater then board size. Please specify a lower number");
-            row = sc.nextInt();
-        }
-
-        System.out.println("Please mention the column number");
-        int col = sc.nextInt();
-
-        while(!validateInput(col, b)) {
-            System.out.println("Column number is greater then board size. Please specify a lower number");
-            col = sc.nextInt();
+        if(!validateInput(row, col)){
+            System.out.println("Invalid Input");
+            return null;
         }
 
         return b.getGrid().get(row).get(col);
+
     }
 }

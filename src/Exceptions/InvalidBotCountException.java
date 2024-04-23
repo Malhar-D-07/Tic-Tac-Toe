@@ -1,4 +1,4 @@
 package Exceptions;
 
-public class InvalidBotCountException extends Exception {
+public class InvalidBotCountException extends  Exception{
 }

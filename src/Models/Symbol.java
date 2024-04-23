@@ -1,11 +1,17 @@
-package Models;
+package models;
 
 public class Symbol {
     private char symbol;
 
-    public Symbol(){}
+    public char getSymbol() {
+        return symbol;
+    }
 
-    public Symbol(char c) {
-        this.symbol = c;
+    public void setSymbol(char symbol) {
+        this.symbol = symbol;
+    }
+
+    public Symbol(char c){
+        this.symbol=c;
     }
 }

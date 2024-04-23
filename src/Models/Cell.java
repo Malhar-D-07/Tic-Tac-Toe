@@ -1,17 +1,11 @@
-package Models;
+package models;
 
 public class Cell {
     private int row;
     private int col;
-    private Player player;
-    private CellStatus cellStatus;
 
-    Cell(int r, int c) {
-        this.row = r;
-        this.col = c;
-        this.player = null;
-        this.cellStatus = CellStatus.EMPTY;
-    }
+    private Player player;
+
     public int getRow() {
         return row;
     }
@@ -44,12 +38,21 @@ public class Cell {
         this.cellStatus = cellStatus;
     }
 
-    public void display() {
-        if(player == null) {
-            System.out.println("| - |");
-        }
-        else {
-            System.out.println("| " + this.player.getSymbol() + " |");
+    private CellStatus cellStatus;
+
+
+    public Cell(int row, int col){
+        this.row = row;
+        this.col = col;
+        this.player = null;
+        this.cellStatus = CellStatus.EMPTY;
+    }
+
+    public void display(){
+        if(player == null){
+            System.out.print("| - |");
+        } else {
+            System.out.print("| " + this.player.getSymbol().getSymbol() + " |");
         }
     }
 }
