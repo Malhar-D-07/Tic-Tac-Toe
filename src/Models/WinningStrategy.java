@@ -1,5 +1,5 @@
 package Models;
 
 public interface WinningStrategy {
-    public boolean checkWinner();
+    public boolean checkWinner(Cell c, Board b);
 }

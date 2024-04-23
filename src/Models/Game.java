@@ -127,4 +127,8 @@ public class Game {
             return new Game(this.dim, this.players, this.winningStrategies);
         }
     }
+
+    public void makeMove() {
+        Player currentPlayer = players.get(nextPlayerTurn);
+    }
 }

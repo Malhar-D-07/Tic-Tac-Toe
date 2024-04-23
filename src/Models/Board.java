@@ -7,6 +7,13 @@ public class Board {
 
     public Board(int dim) {
         this.size = dim;
+        grid = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            grid.add(new ArrayList<>());
+            for (int j = 0; j < size; j++) {
+                grid.get(i).add(new Cell(i, j));
+            }
+        }
     }
 
     public int getSize() {
@@ -23,5 +30,14 @@ public class Board {
 
     public void setGrid(List<List<Cell>> grid) {
         this.grid = grid;
+    }
+
+    public void printBoard() {
+        for(List<Cell> rows: grid) {
+            for (Cell c: rows) {
+                c.display();
+            }
+            System.out.println("-----------------------");
+        }
     }
 }
